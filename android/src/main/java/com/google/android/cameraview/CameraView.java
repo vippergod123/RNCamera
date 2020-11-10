@@ -616,6 +616,10 @@ public class CameraView extends FrameLayout {
         mImpl.takePicture(options);
     }
 
+    public void startLive() {
+        mImpl.startLive();
+    }
+
     /**
      * Record a video and save it to file. The result will be returned to
      * {@link Callback#onVideoRecorded(CameraView, String, int, int)}.

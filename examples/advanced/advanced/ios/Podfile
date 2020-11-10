@@ -36,5 +36,7 @@ target 'advanced' do
 
 
   use_native_modules!
+  pod 'react-native-flipper', :path => '../node_modules/react-native-flipper'
+
 end
 

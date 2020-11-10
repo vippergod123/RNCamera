@@ -714,6 +714,11 @@ class Camera1 extends CameraViewImpl implements MediaRecorder.OnInfoListener,
         takePictureInternal(options);
     }
 
+    @Override
+    void startLive() {
+
+    }
+
     int orientationEnumToRotation(int orientation) {
         switch(orientation) {
             case Constants.ORIENTATION_UP:

@@ -279,6 +279,11 @@ public class CameraModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
+  public void startLive(final Promise promise) {
+     promise.resolve("Start Live in CameraModule !!");
+  }
+
+  @ReactMethod
   public void record(final ReadableMap options, final int viewTag, final Promise promise) {
       final ReactApplicationContext context = getReactApplicationContext();
       final File cacheDirectory = mScopedContext.getCacheDirectory();

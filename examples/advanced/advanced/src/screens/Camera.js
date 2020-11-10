@@ -103,6 +103,10 @@ const styles = StyleSheet.create({
     flex: 1
   },
 
+  liveButton: {
+    flex: 1
+  },
+
   buttonsView: {
     flex: 1,
     backgroundColor: 'black',
@@ -303,6 +307,7 @@ class Camera extends Component{
       ...defaultCameraOptions,
       orientation: getOrientation(),
       takingPic: false,
+      onLive: false,
       recording: false,
       audioDisabled: false,
       elapsed: 0,
@@ -583,6 +588,16 @@ class Camera extends Component{
           style={styles.cameraButton}
         >
           <Icon name={disableOrRecording ? 'camera-off' :'camera'} type='MaterialCommunityIcons'></Icon>
+        </Button>
+
+        <Button
+          transparent
+          rounded
+          onPress={this.startLive}
+          disabled={disableOrRecording}
+          style={styles.liveButton}
+        >
+          <Icon name={disableOrRecording ? 'camera-off' :'wifi'} type='MaterialCommunityIcons'></Icon>
         </Button>
 
         {recording ?
@@ -871,6 +886,7 @@ class Camera extends Component{
       let data = null;
 
       try{
+        console.log(this.camera);
         data = await this.camera.takePictureAsync(options);
       }
       catch(err){
@@ -879,6 +895,38 @@ class Camera extends Component{
       }
 
       Alert.alert("Picture Taken!", JSON.stringify(data, null, 2));
+
+    }
+  }
+
+  startLive = async () => {
+    if (this.camera) {
+
+      if(this.state.takingPic || this.state.recording || !this.state.cameraReady || this.state.onLive){
+        return;
+      }
+      // if we have a non original quality, skip processing and compression.
+      // we will use JPEG compression on resize.
+      let options = {
+          quality: 0.85,
+          fixOrientation: true,
+          forceUpOrientation: true,
+          writeExif: true
+      };
+
+      // this.setState({onLive: true});
+
+      let data = null;
+
+      try{
+        data = await this.camera.startLive();
+      }
+      catch(err){
+        Alert.alert("Error", "Failed to start live: " + (err.message || err));
+        return;
+      }
+
+      Alert.alert("Start live !!", JSON.stringify("Live!!", null, 2));
 
     }
   }
