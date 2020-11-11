@@ -1,16 +1,51 @@
 {
-  "name": "react-native-camera",
-  "description": "A Camera component for React Native. Also reads barcodes.",
-  "version": "3.40.0",
-  "author": "Lochlan Wansbrough <lochie@live.com> (http://lwansbrough.com)",
+  "_from": "react-native-camera@^3.28.0",
+  "_id": "react-native-camera@3.40.0",
+  "_inBundle": false,
+  "_integrity": "sha512-Ur0hZqZcl3SntTVMB9GxuiLYpQxqwgzhQVb+7EGae4WjfDzQEwlGF0bJ7UpZyeUTb1oZmsiSib58xUckn11XMw==",
+  "_location": "/react-native-camera",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "range",
+    "registry": true,
+    "raw": "react-native-camera@^3.28.0",
+    "name": "react-native-camera",
+    "escapedName": "react-native-camera",
+    "rawSpec": "^3.28.0",
+    "saveSpec": null,
+    "fetchSpec": "^3.28.0"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/react-native-camera/-/react-native-camera-3.40.0.tgz",
+  "_shasum": "69845991e46b0892cc2b50322d49b18f292c3202",
+  "_spec": "react-native-camera@^3.28.0",
+  "_where": "/home/cris/Desktop/Project/ReactNative/RNCamera/examples/advanced/advanced",
+  "author": {
+    "name": "Lochlan Wansbrough",
+    "email": "lochie@live.com",
+    "url": "http://lwansbrough.com"
+  },
+  "bugs": {
+    "url": "https://github.com/react-native-community/react-native-camera/issues"
+  },
+  "bundleDependencies": false,
   "collective": {
     "type": "opencollective",
     "url": "https://opencollective.com/react-native-camera",
     "logo": "https://opencollective.com/opencollective/logo.txt"
   },
+  "config": {
+    "commitizen": {
+      "path": "@commitlint/prompt"
+    }
+  },
   "dependencies": {
     "prop-types": "^15.6.2"
   },
+  "deprecated": false,
+  "description": "A Camera component for React Native. Also reads barcodes.",
   "devDependencies": {
     "@babel/runtime": "^7.3.1",
     "@commitlint/cli": "^9.1.2",
@@ -65,21 +100,9 @@
     ]
   },
   "main": "src/index.js",
+  "name": "react-native-camera",
   "nativePackage": true,
   "pre-commit": "lint:staged",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/react-native-community/react-native-camera.git"
-  },
-  "scripts": {
-    "commit": "git-cz",
-    "commitmsg": "commitlint -e $GIT_PARAMS",
-    "lint": "eslint src --max-warnings=0",
-    "lint:staged": "lint-staged",
-    "prettier": "prettier --write",
-    "ci:publish": "semantic-release"
-  },
-  "types": "types/index.d.ts",
   "release": {
     "plugins": [
       "@semantic-release/commit-analyzer",
@@ -103,9 +126,18 @@
       ]
     ]
   },
-  "config": {
-    "commitizen": {
-      "path": "@commitlint/prompt"
-    }
-  }
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/react-native-community/react-native-camera.git"
+  },
+  "scripts": {
+    "ci:publish": "semantic-release",
+    "commit": "git-cz",
+    "commitmsg": "commitlint -e $GIT_PARAMS",
+    "lint": "eslint src --max-warnings=0",
+    "lint:staged": "lint-staged",
+    "prettier": "prettier --write"
+  },
+  "types": "types/index.d.ts",
+  "version": "3.40.0"
 }

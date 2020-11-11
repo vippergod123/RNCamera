@@ -18,8 +18,6 @@ package com.google.android.cameraview;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Rect;
-import android.hardware.Camera;
 import android.media.CamcorderProfile;
 import android.os.Build;
 import android.os.HandlerThread;
@@ -33,7 +31,6 @@ import androidx.core.os.ParcelableCompat;
 import androidx.core.os.ParcelableCompatCreatorCallbacks;
 import androidx.core.view.ViewCompat;
 import android.util.AttributeSet;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.graphics.SurfaceTexture;
@@ -616,8 +613,12 @@ public class CameraView extends FrameLayout {
         mImpl.takePicture(options);
     }
 
-    public void startLive() {
-        mImpl.startLive();
+    public void startLiveness() {
+        mImpl.startLiveness(mContext);
+    }
+
+    public void stopLiveness() {
+        mImpl.stopLiveness(mContext);
     }
 
     /**
@@ -737,6 +738,13 @@ public class CameraView extends FrameLayout {
         public void onMountError() {
             for (Callback callback : mCallbacks) {
                 callback.onMountError(CameraView.this);
+            }
+        }
+
+        @Override
+        public void onCameraCapture(String path) {
+            for (Callback callback : mCallbacks) {
+                callback.onCameraCapture(CameraView.this, path);
             }
         }
 
@@ -881,6 +889,8 @@ public class CameraView extends FrameLayout {
         public void onVideoRecorded(CameraView cameraView, String path, int videoOrientation, int deviceOrientation) {}
 
         public void onFramePreview(CameraView cameraView, byte[] data, int width, int height, int orientation) {}
+
+        public void onCameraCapture(CameraView cameraView, String path) {}
 
         public void onMountError(CameraView cameraView) {}
     }

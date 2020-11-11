@@ -7,7 +7,8 @@ import {
   Alert,
   SafeAreaView,
   AppState,
-  TouchableOpacity
+  TouchableOpacity,
+  PermissionsAndroid
 } from 'react-native';
 import Slider from '@react-native-community/slider';
 import _ from 'underscore';
@@ -524,6 +525,11 @@ class Camera extends Component{
     this.setState({takingPic: false});
   }
 
+  onCameraCapture =  (event) => {
+    console.log("onCameraCapture - path" + event.uri);
+    this.setState({onLive: false});
+  }
+
   onRecordingStart = () => {
     this.reportRequestPrompt = true;
 
@@ -555,13 +561,15 @@ class Camera extends Component{
 
   render() {
 
-    let {orientation, takingPic, cameraReady, recording, audioDisabled, zoom, wb, cameraType, cameraId, cameraIds, flashMode, elapsed} = this.state;
+    let {orientation, takingPic, cameraReady, recording, audioDisabled, zoom, wb, cameraType, cameraId, cameraIds, flashMode, elapsed, onLive} = this.state;
     let {style} = this.props;
 
     let isPortrait = orientation.isPortrait;
 
     let disable = takingPic || !cameraReady;
     let disableOrRecording = disable || recording;
+
+    let disableOrOnLive = disable || onLive;
 
     // flag to decide how to layout camera buttons
     let cameraCount = 0;
@@ -593,11 +601,21 @@ class Camera extends Component{
         <Button
           transparent
           rounded
-          onPress={this.startLive}
-          disabled={disableOrRecording}
+          onPress={this.startLiveness}
+          disabled={disableOrOnLive}
           style={styles.liveButton}
         >
-          <Icon name={disableOrRecording ? 'camera-off' :'wifi'} type='MaterialCommunityIcons'></Icon>
+          <Icon name={disableOrOnLive ? 'delete' :'wifi'} type='MaterialCommunityIcons'></Icon>
+        </Button>
+
+        <Button
+          transparent
+          rounded
+          onPress={this.stopLiveness}
+          disabled={disableOrOnLive}
+          style={styles.liveButton}
+        >
+          <Icon name={disableOrOnLive ? 'delete' :'delete'} type='MaterialCommunityIcons'></Icon>
         </Button>
 
         {recording ?
@@ -695,6 +713,7 @@ class Camera extends Component{
               onAudioInterrupted={this.onAudioInterrupted}
               onAudioConnected={this.onAudioConnected}
               onPictureTaken={this.onPictureTaken}
+              onCameraCapture = {this.onCameraCapture}
               onRecordingStart={this.onRecordingStart}
               onRecordingEnd={this.onRecordingEnd}
               ratio={this.state.aspectRatioStr}
@@ -899,7 +918,11 @@ class Camera extends Component{
     }
   }
 
-  startLive = async () => {
+  startLiveness = async () => {
+    const granted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE, PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE);
+    const isGranted = await PermissionsAndroid.check( PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE);
+
     if (this.camera) {
 
       if(this.state.takingPic || this.state.recording || !this.state.cameraReady || this.state.onLive){
@@ -914,20 +937,37 @@ class Camera extends Component{
           writeExif: true
       };
 
-      // this.setState({onLive: true});
+      this.setState({onLive: true});
 
       let data = null;
 
       try{
-        data = await this.camera.startLive();
+        data = await this.camera.startLiveness(options);
       }
       catch(err){
         Alert.alert("Error", "Failed to start live: " + (err.message || err));
         return;
       }
+    }
+  }
 
-      Alert.alert("Start live !!", JSON.stringify("Live!!", null, 2));
+  stopLiveness = async () => {
+    if (this.camera) {
 
+ 
+      // if we have a non original quality, skip processing and compression.
+      // we will use JPEG compression on resize.
+      // this.setState({onLive: true});
+
+      let data = null;
+
+      try{
+        data = await this.camera.stopLiveness();
+      }
+      catch(err){
+        Alert.alert("Error", "Failed to start live: " + (err.message || err));
+        return;
+      }
     }
   }
 

@@ -190,6 +190,7 @@ export interface RNCameraProps {
     recordAudioPermissionStatus: keyof RecordAudioPermissionStatus;
   }): void;
   onMountError?(error: { message: string }): void;
+  onCameraCapture?(data: { uri: string }): void;
 
   onPictureTaken?(): void;
   onRecordingStart?(event: {
@@ -469,7 +470,6 @@ export class RNCamera extends Component<RNCameraProps & ViewProperties> {
   _cameraHandle: ReturnType<typeof findNodeHandle>;
 
   takePictureAsync(options?: TakePictureOptions): Promise<TakePictureResponse>;
-  startLive(): void;
   recordAsync(options?: RecordOptions): Promise<RecordResponse>;
   refreshAuthorizationStatus(): Promise<void>;
   stopRecording(): void;
