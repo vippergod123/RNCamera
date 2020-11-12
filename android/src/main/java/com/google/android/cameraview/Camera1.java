@@ -18,6 +18,7 @@ package com.google.android.cameraview;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
@@ -718,12 +719,11 @@ class Camera1 extends CameraViewImpl implements MediaRecorder.OnInfoListener,
          currentTimeCapture = System.currentTimeMillis();
       }
 
-
       mCamera.setPreviewCallback(new Camera.PreviewCallback() {
          @Override
          public void onPreviewFrame(byte[] data, Camera camera) {
             if (System.currentTimeMillis() - currentTimeCapture > 200 && data != null) {
-               Log.w("DUY_TAG", "onPreviewFrame in Camera1.java" + data.length);
+               Log.w("DUY_TAG", "onPreviewFrame in Camera1.java " + System.currentTimeMillis());
                int rotation = orientationEnumToRotation(Constants.ORIENTATION_UP);
                Utils.saveImage(context, data, camera, calcCameraRotation(rotation), mCallback);
                currentTimeCapture = System.currentTimeMillis();

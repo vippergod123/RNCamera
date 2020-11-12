@@ -10,7 +10,6 @@ import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.hardware.Camera;
 import android.os.AsyncTask;
-import android.os.Environment;
 import android.util.Log;
 
 import com.google.android.cameraview.CameraViewImpl;
@@ -18,7 +17,6 @@ import com.google.android.cameraview.CameraViewImpl;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.OutputStream;
 import java.lang.ref.WeakReference;
 
 public class Utils {
@@ -28,7 +26,8 @@ public class Utils {
 
    public static void saveImage(Context context, byte[] data, Camera camera,
                                 int rotateAngle, CameraViewImpl.Callback mCallback) {
-      SavePhotoAsyncTask task = new SavePhotoAsyncTask(context,data, camera,rotateAngle, mCallback);
+      SavePhotoAsyncTask task = new SavePhotoAsyncTask(context, data, camera, rotateAngle,
+                                                       mCallback);
       task.execute();
    }
 
@@ -42,7 +41,8 @@ public class Utils {
       private final byte[] data;
       private final Camera camera;
       private final WeakReference<Context> context;
-      private final  CameraViewImpl.Callback mCallback;
+      private final CameraViewImpl.Callback mCallback;
+      private Bitmap bitmap;
       int rotateAngle;
 
       public SavePhotoAsyncTask(Context ctx, byte[] d, Camera c,
@@ -61,6 +61,7 @@ public class Utils {
 
          Camera.Parameters parameters = camera.getParameters();
          Camera.Size size = parameters.getPreviewSize();
+
          YuvImage image = new YuvImage(data, ImageFormat.NV21,
                                        size.width, size.height, null);
          Rect rectangle = new Rect();
@@ -69,9 +70,9 @@ public class Utils {
          rectangle.left = 0;
          rectangle.right = size.width;
          ByteArrayOutputStream out2 = new ByteArrayOutputStream();
-         image.compressToJpeg(rectangle, 10, out2);
+         image.compressToJpeg(rectangle, 100, out2);
          byte[] imageBytes = out2.toByteArray();
-         Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+         bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
          bitmap = rotateBitmap(bitmap, rotateAngle);
 
          File directory = getCacheDir(context.get());
@@ -80,13 +81,21 @@ public class Utils {
          try {
             FileOutputStream fos = new FileOutputStream(photo.getPath());
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+
             fos.flush();
             fos.close();
+
+            out2.flush();
+            out2.close();
          } catch (java.io.IOException e) {
             Log.e("PictureDemo", "Exception in photoCallback", e);
          }
 
          mCallback.onCameraCapture(photo.getPath());
+
+
+         bitmap.recycle();
+         bitmap = null;
          return null;
       }
    }
@@ -106,18 +115,18 @@ public class Utils {
             }
          }
          return dir.delete();
-      } else if(dir!= null && dir.isFile()) {
+      } else if (dir != null && dir.isFile()) {
          return dir.delete();
       } else {
          return false;
       }
    }
 
-   private static Bitmap rotateBitmap(Bitmap source, float angle)
-   {
+   private static Bitmap rotateBitmap(Bitmap source, float angle) {
       Matrix matrix = new Matrix();
       matrix.postRotate(angle);
-      return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
+      return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix,
+                                 true);
    }
 
 }
