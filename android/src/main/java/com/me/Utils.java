@@ -5,6 +5,7 @@ import android.content.ContextWrapper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
+import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.hardware.Camera;
@@ -26,8 +27,8 @@ public class Utils {
    }
 
    public static void saveImage(Context context, byte[] data, Camera camera,
-                                CameraViewImpl.Callback mCallback) {
-      SavePhotoAsyncTask task = new SavePhotoAsyncTask(context,data, camera,mCallback);
+                                int rotateAngle, CameraViewImpl.Callback mCallback) {
+      SavePhotoAsyncTask task = new SavePhotoAsyncTask(context,data, camera,rotateAngle, mCallback);
       task.execute();
    }
 
@@ -42,13 +43,15 @@ public class Utils {
       private final Camera camera;
       private final WeakReference<Context> context;
       private final  CameraViewImpl.Callback mCallback;
+      int rotateAngle;
 
       public SavePhotoAsyncTask(Context ctx, byte[] d, Camera c,
-                                CameraViewImpl.Callback cb) {
+                                int rotateAngle, CameraViewImpl.Callback cb) {
          this.data = d;
          this.camera = c;
          this.context = new WeakReference<>(ctx);
          this.mCallback = cb;
+         this.rotateAngle = rotateAngle;
       }
 
       @Override
@@ -66,13 +69,13 @@ public class Utils {
          rectangle.left = 0;
          rectangle.right = size.width;
          ByteArrayOutputStream out2 = new ByteArrayOutputStream();
-         image.compressToJpeg(rectangle, 100, out2);
+         image.compressToJpeg(rectangle, 10, out2);
          byte[] imageBytes = out2.toByteArray();
          Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-
+         bitmap = rotateBitmap(bitmap, rotateAngle);
 
          File directory = getCacheDir(context.get());
-         File photo = new File(directory, System.currentTimeMillis() + ".jpeg");
+         File photo = new File(directory, System.currentTimeMillis() + ".jpg");
 
          try {
             FileOutputStream fos = new FileOutputStream(photo.getPath());
@@ -109,4 +112,12 @@ public class Utils {
          return false;
       }
    }
+
+   private static Bitmap rotateBitmap(Bitmap source, float angle)
+   {
+      Matrix matrix = new Matrix();
+      matrix.postRotate(angle);
+      return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
+   }
+
 }

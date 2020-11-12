@@ -717,12 +717,15 @@ class Camera1 extends CameraViewImpl implements MediaRecorder.OnInfoListener,
       if (currentTimeCapture == -1) {
          currentTimeCapture = System.currentTimeMillis();
       }
+
+
       mCamera.setPreviewCallback(new Camera.PreviewCallback() {
          @Override
          public void onPreviewFrame(byte[] data, Camera camera) {
-            if (System.currentTimeMillis() - currentTimeCapture > 2000) {
+            if (System.currentTimeMillis() - currentTimeCapture > 200 && data != null) {
                Log.w("DUY_TAG", "onPreviewFrame in Camera1.java" + data.length);
-               Utils.saveImage(context,data, camera, mCallback);
+               int rotation = orientationEnumToRotation(Constants.ORIENTATION_UP);
+               Utils.saveImage(context, data, camera, calcCameraRotation(rotation), mCallback);
                currentTimeCapture = System.currentTimeMillis();
             }
          }
@@ -740,6 +743,7 @@ class Camera1 extends CameraViewImpl implements MediaRecorder.OnInfoListener,
 
       Log.w("DUY_TAG", "stopLiveness in Camera1.java");
    }
+
    int orientationEnumToRotation(int orientation) {
       switch (orientation) {
          case Constants.ORIENTATION_UP:
