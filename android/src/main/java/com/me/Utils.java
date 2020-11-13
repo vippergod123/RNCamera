@@ -13,6 +13,7 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
+import android.util.Base64;
 import android.util.Log;
 
 import com.google.android.cameraview.CameraViewImpl;
@@ -32,15 +33,15 @@ public class Utils implements Handler.Callback {
    private Utils() {
 
    }
-
    public static Utils getInstance() {
       if (instance == null) {
          instance = new Utils();
       }
+
       return instance;
    }
 
-   public static void saveImage(Context context, byte[] data, Camera camera,
+   public void saveImage(Context context, byte[] data, Camera camera,
                                 int rotateAngle, CameraViewImpl.Callback mCallback) {
       SavePhotoAsyncTask task = new SavePhotoAsyncTask(context, data, camera, rotateAngle,
                                                        mCallback);
@@ -164,32 +165,36 @@ public class Utils implements Handler.Callback {
          rectangle.left = 0;
          rectangle.right = size.width;
          ByteArrayOutputStream out2 = new ByteArrayOutputStream();
-         image.compressToJpeg(rectangle, 100, out2);
+         image.compressToJpeg(rectangle, 10, out2);
          byte[] imageBytes = out2.toByteArray();
-         bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-         bitmap = rotateBitmap(bitmap, rotateAngle);
 
-         File directory = getCacheDir(context.get());
-         File photo = new File(directory, System.currentTimeMillis() + ".jpg");
+//         bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+//         bitmap = rotateBitmap(bitmap, rotateAngle);
+//
+//         File directory = getCacheDir(context.get());
+//         File photo = new File(directory, System.currentTimeMillis() + ".jpg");
+//
+//         try {
+//            FileOutputStream fos = new FileOutputStream(photo.getPath());
+//            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+//
+//            fos.flush();
+//            fos.close();
+//
+//            out2.flush();
+//            out2.close();
+//         } catch (java.io.IOException e) {
+//            Log.e("PictureDemo", "Exception in photoCallback", e);
+//         }
+//
+//         mCallback.onCameraCapture(photo.getPath());
+//
+//
+//         bitmap.recycle();
+//         bitmap = null;
+         String imgString = Base64.encodeToString(imageBytes, Base64.NO_WRAP);
+         mCallback.onCameraCapture(imgString);
 
-         try {
-            FileOutputStream fos = new FileOutputStream(photo.getPath());
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-
-            fos.flush();
-            fos.close();
-
-            out2.flush();
-            out2.close();
-         } catch (java.io.IOException e) {
-            Log.e("PictureDemo", "Exception in photoCallback", e);
-         }
-
-         mCallback.onCameraCapture(photo.getPath());
-
-
-         bitmap.recycle();
-         bitmap = null;
          return null;
       }
    }

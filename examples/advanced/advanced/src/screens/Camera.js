@@ -526,7 +526,7 @@ class Camera extends Component{
   }
 
   onCameraCapture =  (event) => {
-    console.log("onCameraCapture - path" + event.uri);
+    console.log("onCameraCapture - path" + event.base64);
     this.setState({onLive: false});
   }
 

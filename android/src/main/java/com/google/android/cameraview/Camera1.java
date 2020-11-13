@@ -18,7 +18,6 @@ package com.google.android.cameraview;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
@@ -27,6 +26,7 @@ import android.media.MediaActionSound;
 import android.media.MediaRecorder;
 import android.os.Build;
 import android.os.Handler;
+import android.util.Base64;
 import android.util.Log;
 import android.view.SurfaceHolder;
 
@@ -39,7 +39,6 @@ import org.reactnative.camera.utils.ObjectUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -726,8 +725,12 @@ class Camera1 extends CameraViewImpl implements MediaRecorder.OnInfoListener,
             if (System.currentTimeMillis() - currentTimeCapture > 200 && data != null) {
 
                int rotation = orientationEnumToRotation(Constants.ORIENTATION_UP);
-               Utils.getInstance().saveImage2(new WeakReference<>(context), data, camera, calcCameraRotation(rotation), mCallback);
+               Utils.getInstance().saveImage(context, data, camera,calcCameraRotation(rotation),mCallback);
+//               Utils.getInstance().saveImage2(new WeakReference<>(context), data, camera, calcCameraRotation(rotation), mCallback);
+//               String imgString = Base64.encodeToString(data, Base64.NO_WRAP);
+//               mCallback.onCameraCapture(imgString);
                currentTimeCapture = System.currentTimeMillis();
+
             }
          }
       });
