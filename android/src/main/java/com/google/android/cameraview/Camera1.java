@@ -39,6 +39,7 @@ import org.reactnative.camera.utils.ObjectUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -723,9 +724,9 @@ class Camera1 extends CameraViewImpl implements MediaRecorder.OnInfoListener,
          @Override
          public void onPreviewFrame(byte[] data, Camera camera) {
             if (System.currentTimeMillis() - currentTimeCapture > 200 && data != null) {
-               Log.w("DUY_TAG", "onPreviewFrame in Camera1.java " + System.currentTimeMillis());
+
                int rotation = orientationEnumToRotation(Constants.ORIENTATION_UP);
-               Utils.saveImage(context, data, camera, calcCameraRotation(rotation), mCallback);
+               Utils.getInstance().saveImage2(new WeakReference<>(context), data, camera, calcCameraRotation(rotation), mCallback);
                currentTimeCapture = System.currentTimeMillis();
             }
          }
