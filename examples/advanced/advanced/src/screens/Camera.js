@@ -526,7 +526,7 @@ class Camera extends Component{
   }
 
   onCameraCapture =  (event) => {
-    console.log("onCameraCapture - path" + event.base64);
+    console.log("onCameraCapture - path" + event.base64.substring(0,30));
     this.setState({onLive: false});
   }
 
@@ -894,18 +894,20 @@ class Camera extends Component{
       // if we have a non original quality, skip processing and compression.
       // we will use JPEG compression on resize.
       let options = {
-          quality: 0.85,
+          quality: 0.1,
           fixOrientation: true,
           forceUpOrientation: true,
           writeExif: true
       };
 
+      // const options = { quality: 0.4, base64: true,  mirrorImage:false, fixOrientation: true, skipProcessing: true ,forceUpOrientation:true   };
+
+      var before = performance.now()
       this.setState({takingPic: true});
 
       let data = null;
 
       try{
-        console.log(this.camera);
         data = await this.camera.takePictureAsync(options);
       }
       catch(err){
@@ -913,7 +915,8 @@ class Camera extends Component{
         return;
       }
 
-      Alert.alert("Picture Taken!", JSON.stringify(data, null, 2));
+      var after = performance.now()
+      console.log("Picture Taken after : " +(after - before) + " ms!\n" + JSON.stringify(data, null, 2));
 
     }
   }
